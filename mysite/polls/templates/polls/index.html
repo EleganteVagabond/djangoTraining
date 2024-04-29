@@ -1,0 +1,12 @@
+<h1>Welcome to the polls page!</h1>
+{% if latest_question_list %}
+<h3>Below is a list of the {{ latest_question_list|length }} most recent questions</h3>
+
+<ul>
+    {% for question in latest_question_list %}
+    <li><a href="{% url 'polls:detail' question.id %}">{{ question.question_text }}</a></li>
+    {% endfor %}
+</ul>
+{% else %}
+<p>No polls are available.</p>
+{% endif %}

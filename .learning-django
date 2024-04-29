@@ -1,0 +1,81 @@
+Following https://docs.djangoproject.com/en/4.2/intro/tutorial01/
+
+## Using manage.py
+- `runserver` - starts the server
+- `startapp [app]` - generates the scaffolding for a new app
+- `creatsuperuser` - creates an admin user
+- `shell` - opens a python shell with the context of the webapp
+- `migrate` - runs migrations
+- `check` - checks the status of the app (ex any issues with migrations)
+- `makemigration [app]` - creates a migration based on any updates to the models in the app
+- `sqlmigrate [app] [migration_name]` - shows the statements inside a specific migration for a particular app
+- `test [app]` - will run any tests in the app
+
+## How to add your apps to the website project
+- update the mysite/settings.py file and add to INSTALLED_APPS
+
+## How to add/update models
+-Change your models (in models.py).
+-Run python manage.py makemigrations to create migrations for those changes
+-Run python manage.py migrate to apply those changes to the database.
+
+## How to query model objects
+- import them from app.models
+- `Model.objects.all()` returns all objects
+- `Model.objects.filter(id=x)` returns the object with id x
+- - fields have built in options for things like lte, gte, gt, etc... `pub_date__lte`
+- `Model.objects.get(pk=x)` returns the object with primary key x
+- `Model.objects.filter(a_field__startswith="Text")` returns objects that have a value for a_field that starts with Text
+- `Model.objects.get(some_field=some_value)` returns the object that matches the value
+- `Model.objects.get(some_field=some_value)` returns the object that matches the value
+
+- If no objects match you will get a DoesNotExist error particular to that model e.g. polls.models.Question.DoesNotExist
+
+## Managing relations
+- `Model.[relation_name]_set.[query method eg filter, get, etc]` Note the built in _set method for all relations
+- `Model.[relation_name]_set.create(RelationModel(values))` Note the built in _set method for all relations
+- `Model.[relation_name]_set.count()` gets the total # of objects related to this one in the given relationship
+- `Model.objects.filter(relation__relation_field__value_field)` Note the __ (dunders) that indicat auto-generated methods
+
+## How to create model objects
+- new_model = Model(....)
+- new_model.save()
+
+## How to update model objects
+- model_obj.field="a new value"
+- model_obj.save()
+
+# Views
+
+## Creating a view
+- views are added as methods to views.py
+- request.POST is a dictionary you can use to access submitted data. also request.GET
+- - you might use the POST object to validate that a POST method initiated the call to the view
+- There are classes to simplify creating views as objects. See [django.views.generic](https://docs.djangoproject.com/en/4.2/topics/class-based-views/)
+
+## Routing
+- paths are added to urls.py
+- paths can contain variables that will be passed into the view methods 
+- - ex: `path("<int:a_model_id>", view.model_details, name="results")` => `model_details(request, a_model_id)`
+- - the form of these is <converter:patern_name>
+- use the reverse method to look up the url based on name
+- - using the above example we would call `reverse("results", args=(model.id))`
+
+## Templating views
+- By default django will look for a `templates` folder
+- - This can be modified in the `TEMPLATES` setting
+- - always create a subfolder in the templates folder that matches the name of your app to keep namespaces separated (since the site merges all of the templates from the various apps so you could get collisions)
+- - - see https://docs.djangoproject.com/en/4.2/intro/tutorial03/#:~:text=Template%20namespacing
+- Use `{% if/elif/else for/while %}` for conditionals and loops
+- Use `{{ value_from_context }}` for values
+- There is a separate set of functions available in the templating language differing from python using a `{{ variable|method }}` sytax
+- - https://docs.djangoproject.com/en/4.2/ref/templates/builtins/
+- Can reference a path in the urls.py using this syntax
+- - `{% url 'app_name:method' model.parameter %}`
+
+# Admin functionality
+
+## Models
+- models must be added explicitly into admin.py
+- views have default edit widgets based on data type. ex datetime shows a date and time editor
+- django automatically maintains and edit/audit history

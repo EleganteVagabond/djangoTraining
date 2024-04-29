@@ -1,0 +1,24 @@
+<h1>You are viewing the details for Question #{{ question.id }}</h1>
+<h3>User is asked '{{ question }}'</h3>
+<h4>Options</h4>
+<ul>
+    {% for choice in question.choice_set.all %}
+    <li>{{ choice.choice_text }} | {{ choice.votes }}</li>
+    {% endfor %}
+</ul>
+<h5>Published on {{ question.pub_date }}</h5>
+
+<form action="{% url 'polls:vote' question.id %}" method="post">
+    {% csrf_token %}
+    <fieldset>
+        <legend>
+            <h1>{{ question.question_text }}</h1>
+        </legend>
+        {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+        {% for choice in question.choice_set.all %}
+        <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}">
+        <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br>
+        {% endfor %}
+    </fieldset>
+    <input type="submit" value="Vote">
+</form>
